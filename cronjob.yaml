@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: jiradata-job
+spec:
+  schedule: "0 2 * * *" # runs daily at 2am
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: jiradata
+            image: repos/jiradata:latest
+            env:
+            - name: JIRA_STARTDATE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.creationTimestamp
+            - name: JIRA_ENDDATE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.creationTimestamp
+            command: ["/bin/sh", "-c"]
+            args:
+              - |
+                export JIRA_STARTDATE=$(date -d "2 days ago" +%Y-%m-%d)
+                export JIRA_ENDDATE=$(date -d "1 day ago" +%Y-%m-%d)
+                dotnet JiraData.dll
+          restartPolicy: OnFailure
