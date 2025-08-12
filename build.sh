@@ -5,8 +5,11 @@
 docker build -t repos/jiradata:latest .
 
 # (Optional) Load the image into Minikube or Kind if using a local cluster
-minikube image load repos/jiradata:latest
+#minikube image load repos/jiradata:latest
 # kind load docker-image yourrepo/jiradata:latest
+# Tag and push to MicroK8s registry
+docker tag repos/jiradata:latest localhost:32000/jiradata:latest
+docker push localhost:32000/jiradata:latest
 
 # Apply the Kubernetes CronJob
 kubectl apply -f cronjob.yaml
