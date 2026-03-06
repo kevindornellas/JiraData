@@ -20,23 +20,29 @@ public class JiraApiClient
         _jiraBaseUrl = jiraBaseUrl;
         _username = username;
         _apiToken = apiToken;
-        // Authenticate with the Jira API using Basic Authentication
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("Authorization",
             $"Basic {Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{_username}:{_apiToken}"))}");
-
+        client.DefaultRequestHeaders.Add("Accept", "application/json"); // <-- Add this line
     }
 
     // Method to get issues from Jira API
     public async Task<List<JiraIssue>> GetIssuesFromJiraAsync(string jqlQuery)
     {
-        string url = $"{_jiraBaseUrl}/rest/api/2/search?jql={Uri.EscapeDataString(jqlQuery)}";
-
+        string url = $"{_jiraBaseUrl}/rest/api/3/search/jql";
+        var requestBody = new
+        {
+            jql = jqlQuery,
+            maxResults = 200, // or your preferred value
+            fields = new[] { "*all" }
+        };
         try
         {
-            // Send GET request to Jira API
-            var response = await client.GetStringAsync(url);
-            dynamic jsonResponse = JsonConvert.DeserializeObject(response);
+            var content = new StringContent(JsonConvert.SerializeObject(requestBody), System.Text.Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            dynamic jsonResponse = JsonConvert.DeserializeObject(responseString);
 
             List<JiraIssue> issues = new List<JiraIssue>();
 
@@ -66,7 +72,6 @@ public class JiraApiClient
                     Comments = getDeveloperComments(developer, comments),
                     History = history,
                     Tester = CleanField(issue.fields.customfield_10037)
-
                 };
 
                 issues.Add(jiraIssue);

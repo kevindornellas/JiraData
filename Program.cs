@@ -24,7 +24,7 @@ for (int i = 0; i < days; i++)
     
     string start = startDate.AddDays(i).ToString("yyyy-MM-dd");
     string end = startDate.AddDays(i + 1).ToString("yyyy-MM-dd");
-    string jqlQuery = "project In (\"Elastic Product Development\") and statuscategory = Complete and statuscategorychangeddate > " + start +"  and statuscategorychangeddate < " + end + "  and (resolution Is EMPTY or resolution in (Done, Declined)) and type in (Story, Task, Bug) ORDER BY key ASC, created DESC";
+    string jqlQuery = "project In (\"Elastic Admin\", \"Elastic Product Development\") and statuscategory = Complete and statuscategorychangeddate > " + start +"  and statuscategorychangeddate < " + end + "  and (resolution Is EMPTY or resolution in (Done, Declined)) and type in (Story, Task, Bug) ORDER BY key ASC, created DESC";
     Console.WriteLine("Getting Data");
     // Get issues from Jira
     List<JiraIssue> issues = await jiraApiClient.GetIssuesFromJiraAsync(jqlQuery);
