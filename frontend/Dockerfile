@@ -2,11 +2,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY ["frontend/JiraDataFrontend.csproj", "frontend/"]
-RUN dotnet restore "frontend/JiraDataFrontend.csproj"
+COPY ["JiraDataFrontend.csproj", "."]
+RUN dotnet restore "JiraDataFrontend.csproj"
 
-COPY ["frontend/", "frontend/"]
-WORKDIR "/src/frontend"
+COPY [".", "."]
 RUN dotnet build "JiraDataFrontend.csproj" -c Release -o /app/build
 
 FROM build AS publish
