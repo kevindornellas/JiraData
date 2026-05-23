@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: jiradata-frontend
-        image: jiradata-frontend:latest
+        image: 192.168.86.28:32000/jiradataweb:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
