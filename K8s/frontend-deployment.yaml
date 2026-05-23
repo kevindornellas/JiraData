@@ -50,3 +50,5 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "200m"
+      nodeSelector:
+        kubernetes.io/hostname: stormtrooper
