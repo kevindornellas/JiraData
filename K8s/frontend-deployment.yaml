@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jiradata-frontend
+  namespace: default
+  labels:
+    app: jiradata-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jiradata-frontend
+  template:
+    metadata:
+      labels:
+        app: jiradata-frontend
+    spec:
+      containers:
+      - name: jiradata-frontend
+        image: jiradata-frontend:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+          name: http
+        - containerPort: 5001
+          name: https
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ASPNETCORE_URLS
+          value: "http://+:5000;https://+:5001"
+        - name: JiraDataApi__BaseUrl
+          value: "http://jiradata-api-service:5000"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"

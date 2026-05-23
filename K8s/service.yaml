@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jiradata-api-service
+  namespace: default
+  labels:
+    app: jiradata-api
+spec:
+  type: LoadBalancer
+  selector:
+    app: jiradata-api
+  ports:
+  - name: http
+    port: 80
+    targetPort: 5000
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: 5001
+    protocol: TCP

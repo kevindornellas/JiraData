@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jiradata-api
+  namespace: default
+  labels:
+    app: jiradata-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jiradata-api
+  template:
+    metadata:
+      labels:
+        app: jiradata-api
+    spec:
+      containers:
+      - name: jiradata-api
+        image: jiradata:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+          name: http
+        - containerPort: 5001
+          name: https
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ASPNETCORE_URLS
+          value: "http://+:5000;https://+:5001"
+        - name: Jira__BaseUrl
+          valueFrom:
+            secretKeyRef:
+              name: jiradata-secrets
+              key: jira-base-url
+        - name: Jira__Username
+          valueFrom:
+            secretKeyRef:
+              name: jiradata-secrets
+              key: jira-username
+        - name: Jira__ApiToken
+          valueFrom:
+            secretKeyRef:
+              name: jiradata-secrets
+              key: jira-api-token
+        - name: Sql__ConnectionString
+          valueFrom:
+            secretKeyRef:
+              name: jiradata-secrets
+              key: sql-connection-string
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # Backend API
+  jiradata-api:
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000;https://+:5001
+      - Jira__BaseUrl=https://your-jira-instance.atlassian.net
+      - Jira__Username=your-email@example.com
+      - Jira__ApiToken=your-api-token
+      - Sql__ConnectionString=Server=mssql;Database=JiraData;User Id=sa;Password=YourPassword123!;TrustServerCertificate=true;Encrypt=false;
+    depends_on:
+      - mssql
+    networks:
+      - jiradata-network
+    container_name: jiradata-api
+
+  # Frontend Dashboard
+  jiradata-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5000"
+      - "5003:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000;https://+:5001
+      - JiraDataApi__BaseUrl=http://jiradata-api:5000
+    depends_on:
+      - jiradata-api
+    networks:
+      - jiradata-network
+    container_name: jiradata-frontend
+
+  # SQL Server Database
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "YourPassword123!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    networks:
+      - jiradata-network
+    container_name: jiradata-mssql
+
+volumes:
+  mssql-data:
+
+networks:
+  jiradata-network:
+    driver: bridge
