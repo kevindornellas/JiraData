@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: jiradata-api
-        image: jiradata:latest
+        image: 192.168.86.28:32000/jiradata:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
