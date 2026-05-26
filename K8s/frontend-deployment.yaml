@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: jiradata-frontend
-        image: 192.168.86.28:32000/jiradataweb:latest
+        image: localhost:32000/jiradataweb:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -51,4 +51,4 @@ spec:
             memory: "256Mi"
             cpu: "200m"
       nodeSelector:
-        kubernetes.io/hostname: stormtrooper
+        kubernetes.io/hostname: kevin-ubuntu

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: jiradata-api
-        image: 192.168.86.28:32000/jiradata:latest
+        image: localhost:32000/jiradata:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -69,4 +69,4 @@ spec:
             memory: "512Mi"
             cpu: "500m"
       nodeSelector:
-        kubernetes.io/hostname: stormtrooper
+        kubernetes.io/hostname: kevin-ubuntu
