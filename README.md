@@ -206,3 +206,20 @@ Runs on `https://localhost:5001` and `http://localhost:5000`
 - The sync operation can take a long time for large date ranges; consider running syncs during off-hours
 - SQL database must be pre-created with the appropriate schema
 - All dates should be in YYYY-MM-DD format
+
+Image deployment:
+docker build -t jiradata:latest .
+docker images | grep jiradata
+
+
+docker tag jiradata:latest localhost:32000/jiradata:latest
+
+docker push localhost:32000/jiradata:latest
+
+docker build -t jiradataweb:latest .
+docker images | grep jiradataweb
+
+
+docker tag jiradataweb:latest localhost:32000/jiradataweb:latest
+
+docker push localhost:32000/jiradataweb:latest
