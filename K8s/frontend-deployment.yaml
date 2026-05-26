@@ -22,13 +22,11 @@ spec:
         ports:
         - containerPort: 5000
           name: http
-        - containerPort: 5001
-          name: https
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Production"
         - name: ASPNETCORE_URLS
-          value: "http://+:5000;https://+:5001"
+          value: "http://+:5000"
         - name: JiraDataApi__BaseUrl
           value: "http://jiradata-api-service:5000"
         livenessProbe:
