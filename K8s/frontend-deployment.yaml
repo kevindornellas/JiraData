@@ -31,16 +31,18 @@ spec:
           value: "http://jiradata-api-service:5000"
         livenessProbe:
           httpGet:
-            path: /
+            path: /healthz
             port: 5000
           initialDelaySeconds: 30
           periodSeconds: 10
+          timeoutSeconds: 5
         readinessProbe:
           httpGet:
-            path: /
+            path: /healthz
             port: 5000
           initialDelaySeconds: 10
           periodSeconds: 5
+          timeoutSeconds: 5
         resources:
           requests:
             memory: "128Mi"
