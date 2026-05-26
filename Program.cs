@@ -11,8 +11,6 @@ builder.Configuration
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
-
 app.MapPost("/api/jira/sync", async (string? startDate, string? endDate) =>
 {
     try
@@ -61,7 +59,7 @@ app.MapPost("/api/jira/sync", async (string? startDate, string? endDate) =>
     }
     catch (Exception ex)
     {
-        return Results.InternalServerError();
+        return Results.StatusCode(500);
     }
 });
 
