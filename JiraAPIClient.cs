@@ -27,7 +27,7 @@ public class JiraApiClient
     }
 
     // Method to get issues from Jira API
-    public async Task<List<JiraIssue>> GetIssuesFromJiraAsync(string jqlQuery)
+    public async Task<List<JiraIssue>> GetIssuesFromJiraAsync(string jqlQuery, Func<string, Task>? onProgress = null)
     {
         string url = $"{_jiraBaseUrl}/rest/api/3/search/jql";
         var requestBody = new
@@ -50,11 +50,12 @@ public class JiraApiClient
             {
                 string key = issue.key;
                 Console.WriteLine(key);
+                if (onProgress != null) await onProgress(key);
                 var developerField = issue.fields.customfield_10084;
                 string developer = CleanField(developerField);
                 var assigneeField = issue.fields.assignee;
                 var comments = await GetCommentsForIssueAsync(key);
-                List<JiraHistory> history = await GetHistoryForIssueAsync(key);
+                List<JiraHistory> history = await GetHistoryForIssueAsync(key, onProgress);
                 JiraIssue jiraIssue = new JiraIssue
                 {
                     StoryKey = issue.key,
@@ -154,7 +155,7 @@ public class JiraApiClient
         }
     }
 
-    private async Task<List<JiraHistory>> GetHistoryForIssueAsync(string issueKey)
+    private async Task<List<JiraHistory>> GetHistoryForIssueAsync(string issueKey, Func<string, Task>? onProgress = null)
     {
         string url = $"{_jiraBaseUrl}/rest/api/2/issue/{issueKey}/changelog";
 
@@ -164,7 +165,9 @@ public class JiraApiClient
 
             var response = await client.GetStringAsync(url);
             dynamic jsonResponse = JsonConvert.DeserializeObject(response);
-            Console.WriteLine(jsonResponse.values.Count + " histories found for issue " + issueKey);
+            var historyCount = (int)jsonResponse.values.Count;
+            Console.WriteLine(historyCount + " histories found for issue " + issueKey);
+            if (onProgress != null) await onProgress($"{historyCount} histories found for issue {issueKey}");
             dynamic history = new List<JiraHistory>();
             if (jsonResponse == null || jsonResponse.values == null)
             {
