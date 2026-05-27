@@ -220,7 +220,7 @@ public class JiraApiClient
         catch (Exception ex)
         {
             Console.WriteLine($"Error retrieving changelog: {ex.Message}");
-            return history;
+            return new List<JiraHistory>();
         }
     }
 
