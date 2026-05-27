@@ -43,6 +43,9 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 5
           timeoutSeconds: 5
+        volumeMounts:
+        - name: dataprotection-keys
+          mountPath: /root/.aspnet/DataProtection-Keys
         resources:
           requests:
             memory: "128Mi"
@@ -50,5 +53,9 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "200m"
+      volumes:
+      - name: dataprotection-keys
+        persistentVolumeClaim:
+          claimName: jiradata-frontend-dp-keys
       nodeSelector:
         kubernetes.io/hostname: kevin-ubuntu
