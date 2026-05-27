@@ -82,7 +82,7 @@ app.MapGet("/api/jira/latest-date", (string? connectionString) =>
     }
     catch (Exception ex)
     {
-        return Results.StatusCode(500);
+        return Results.Problem(ex.Message);
     }
 });
 
