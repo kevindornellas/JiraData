@@ -218,8 +218,5 @@ docker push localhost:32000/jiradata:latest
 
 docker build -t jiradataweb:latest .
 docker images | grep jiradataweb
-
-
 docker tag jiradataweb:latest localhost:32000/jiradataweb:latest
-
 docker push localhost:32000/jiradataweb:latest

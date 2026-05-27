@@ -81,8 +81,9 @@ public class IndexModel : PageModel
         {
             var apiBaseUrl = _configuration["JiraDataApi:BaseUrl"] ?? "http://jiradata-api-service:5000";
             var client = _httpClientFactory.CreateClient();
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
 
-            var response = await client.GetAsync($"{apiBaseUrl}/api/jira/latest-date");
+            var response = await client.GetAsync($"{apiBaseUrl}/api/jira/latest-date", cts.Token);
             
             if (response.IsSuccessStatusCode)
             {
@@ -112,8 +113,9 @@ public class IndexModel : PageModel
         {
             var apiBaseUrl = _configuration["JiraDataApi:BaseUrl"] ?? "http://jiradata-api-service:5000";
             var client = _httpClientFactory.CreateClient();
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
 
-            var response = await client.GetAsync($"{apiBaseUrl}/health");
+            var response = await client.GetAsync($"{apiBaseUrl}/health", cts.Token);
             ApiHealthy = response.IsSuccessStatusCode;
         }
         catch (Exception ex)
