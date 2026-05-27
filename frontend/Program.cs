@@ -30,6 +30,14 @@ app.MapGet("/api/sync/stream", async (string? startDate, string? endDate, HttpRe
             $"{apiBaseUrl}/api/jira/sync/stream?startDate={Uri.EscapeDataString(startDate ?? "")}&endDate={Uri.EscapeDataString(endDate ?? "")}",
             HttpCompletionOption.ResponseHeadersRead);
 
+        if (!backendResponse.IsSuccessStatusCode)
+        {
+            await httpResponse.WriteAsync($"data: ERROR: Backend returned {(int)backendResponse.StatusCode} — is the backend image up to date?\n\n");
+            await httpResponse.WriteAsync("event: done\ndata: Failed.\n\n");
+            await httpResponse.Body.FlushAsync();
+            return;
+        }
+
         using var stream = await backendResponse.Content.ReadAsStreamAsync();
         using var reader = new StreamReader(stream);
 
@@ -64,6 +72,14 @@ app.MapGet("/api/cleanup/stream", async (HttpResponse httpResponse, IConfigurati
         using var backendResponse = await client.GetAsync(
             $"{apiBaseUrl}/api/jira/cleanup/stream",
             HttpCompletionOption.ResponseHeadersRead);
+
+        if (!backendResponse.IsSuccessStatusCode)
+        {
+            await httpResponse.WriteAsync($"data: ERROR: Backend returned {(int)backendResponse.StatusCode} — is the backend image up to date?\n\n");
+            await httpResponse.WriteAsync("event: done\ndata: Failed.\n\n");
+            await httpResponse.Body.FlushAsync();
+            return;
+        }
 
         using var stream = await backendResponse.Content.ReadAsStreamAsync();
         using var reader = new StreamReader(stream);
