@@ -97,6 +97,64 @@ app.MapGet("/api/jira/status", () =>
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
+app.MapGet("/api/jira/cleanup/stream", async (HttpResponse response) =>
+{
+    response.Headers["Content-Type"] = "text/event-stream";
+    response.Headers["Cache-Control"] = "no-cache";
+    response.Headers["X-Accel-Buffering"] = "no";
+
+    async Task Send(string msg)
+    {
+        await response.WriteAsync($"data: {msg}\n\n");
+        await response.Body.FlushAsync();
+    }
+
+    try
+    {
+        var configuration = app.Configuration;
+        var jiraBaseUrl = Environment.GetEnvironmentVariable("Jira__BaseUrl") ?? configuration["Jira:BaseUrl"];
+        var username = Environment.GetEnvironmentVariable("Jira__Username") ?? configuration["Jira:Username"];
+        var apiToken = Environment.GetEnvironmentVariable("Jira__ApiToken") ?? configuration["Jira:ApiToken"];
+        var sqlConnectionString = Environment.GetEnvironmentVariable("Sql__ConnectionString") ?? configuration["Sql:ConnectionString"];
+
+        var sqlInserter = new SQLInserter(sqlConnectionString);
+        var keys = sqlInserter.GetNullCompletedDateKeys();
+
+        await Send($"Found {keys.Count} issues with null CompletedDate");
+
+        var jiraApiClient = new JiraApiClient(jiraBaseUrl, username, apiToken);
+        int updated = 0;
+        int skipped = 0;
+
+        for (int i = 0; i < keys.Count; i++)
+        {
+            var key = keys[i];
+            await Send($"[{i + 1}/{keys.Count}] {key}");
+
+            var resolutionDate = await jiraApiClient.GetIssueResolutionDateAsync(key);
+
+            if (!string.IsNullOrEmpty(resolutionDate))
+            {
+                sqlInserter.UpdateCompletedDate(key, resolutionDate);
+                await Send($"  -> Updated: {resolutionDate}");
+                updated++;
+            }
+            else
+            {
+                await Send($"  -> No resolution date in Jira, skipping");
+                skipped++;
+            }
+        }
+
+        await response.WriteAsync($"event: done\ndata: Cleanup complete — {updated} updated, {skipped} skipped (no resolution date in Jira).\n\n");
+        await response.Body.FlushAsync();
+    }
+    catch (Exception ex)
+    {
+        await Send($"ERROR: {ex.Message}");
+    }
+});
+
 app.MapGet("/api/jira/sync/stream", async (string? startDate, string? endDate, HttpResponse response) =>
 {
     response.Headers["Content-Type"] = "text/event-stream";

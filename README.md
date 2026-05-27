@@ -212,7 +212,7 @@ docker build -t jiradata:latest .
 docker images | grep jiradata
 docker tag jiradata:latest localhost:32000/jiradata:latest
 docker push localhost:32000/jiradata:latest
-
+cd frontend
 docker build -t jiradataweb:latest .
 docker images | grep jiradataweb
 docker tag jiradataweb:latest localhost:32000/jiradataweb:latest

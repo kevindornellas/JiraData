@@ -100,4 +100,28 @@ public class SQLInserter
         command.Parameters.AddWithValue("@ToValue", item.To ?? (object)DBNull.Value);
         command.ExecuteNonQuery();
     }
+
+    public List<string> GetNullCompletedDateKeys()
+    {
+        var keys = new List<string>();
+        using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+        var query = "SELECT StoryKey FROM JiraIssue WHERE CompletedDate IS NULL OR CompletedDate = ''";
+        using var command = new SqlCommand(query, connection);
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+            keys.Add(reader.GetString(0));
+        return keys;
+    }
+
+    public void UpdateCompletedDate(string storyKey, string completedDate)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+        var query = "UPDATE JiraIssue SET CompletedDate = @CompletedDate WHERE StoryKey = @StoryKey";
+        using var command = new SqlCommand(query, connection);
+        command.Parameters.AddWithValue("@CompletedDate", completedDate);
+        command.Parameters.AddWithValue("@StoryKey", storyKey);
+        command.ExecuteNonQuery();
+    }
 }

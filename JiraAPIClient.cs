@@ -219,8 +219,20 @@ public class JiraApiClient
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error retrieving history for issue {issueKey}: {ex.Message}");
-            return new List<JiraHistory>();
+        public async Task<string?> GetIssueResolutionDateAsync(string issueKey)
+    {
+        string url = $"{_jiraBaseUrl}/rest/api/3/issue/{issueKey}?fields=resolutiondate";
+        try
+        {
+            var response = await client.GetStringAsync(url);
+            dynamic json = JsonConvert.DeserializeObject(response);
+            var resolutionDate = json?.fields?.resolutiondate;
+            return resolutionDate != null ? (string)resolutionDate : null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving resolution date for {issueKey}: {ex.Message}");
+            return null;
         }
     }
 
