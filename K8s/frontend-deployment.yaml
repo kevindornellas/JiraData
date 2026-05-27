@@ -18,7 +18,7 @@ spec:
       containers:
       - name: jiradata-frontend
         image: localhost:32000/jiradataweb:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
           name: http
