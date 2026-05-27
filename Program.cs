@@ -146,7 +146,7 @@ app.MapGet("/api/jira/cleanup/stream", async (HttpResponse response) =>
             }
         }
 
-        await response.WriteAsync($"event: done\ndata: Cleanup complete — {updated} updated, {skipped} skipped (no resolution date in Jira).\n\n");
+        await response.WriteAsync($"event: done\ndata: Cleanup complete - {updated} updated, {skipped} skipped (no resolution date in Jira).\n\n");
         await response.Body.FlushAsync();
     }
     catch (Exception ex)
@@ -209,7 +209,7 @@ app.MapGet("/api/jira/sync/stream", async (string? startDate, string? endDate, H
             await Send($"Inserted {issues.Count} issues for {start}");
         }
 
-        await response.WriteAsync($"event: done\ndata: Sync complete — {issuesProcessed} issues processed from {startDate} to {endDate}.\n\n");
+        await response.WriteAsync($"event: done\ndata: Sync complete - {issuesProcessed} issues processed from {startDate} to {endDate}.\n\n");
         await response.Body.FlushAsync();
     }
     catch (Exception ex)

@@ -32,7 +32,7 @@ app.MapGet("/api/sync/stream", async (string? startDate, string? endDate, HttpRe
 
         if (!backendResponse.IsSuccessStatusCode)
         {
-            await httpResponse.WriteAsync($"data: ERROR: Backend returned {(int)backendResponse.StatusCode} — is the backend image up to date?\n\n");
+            await httpResponse.WriteAsync($"data: ERROR: Backend returned {(int)backendResponse.StatusCode} - is the backend image up to date?\n\n");
             await httpResponse.WriteAsync("event: done\ndata: Failed.\n\n");
             await httpResponse.Body.FlushAsync();
             return;
@@ -75,7 +75,7 @@ app.MapGet("/api/cleanup/stream", async (HttpResponse httpResponse, IConfigurati
 
         if (!backendResponse.IsSuccessStatusCode)
         {
-            await httpResponse.WriteAsync($"data: ERROR: Backend returned {(int)backendResponse.StatusCode} — is the backend image up to date?\n\n");
+            await httpResponse.WriteAsync($"data: ERROR: Backend returned {(int)backendResponse.StatusCode} - is the backend image up to date?\n\n");
             await httpResponse.WriteAsync("event: done\ndata: Failed.\n\n");
             await httpResponse.Body.FlushAsync();
             return;
