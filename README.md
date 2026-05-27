@@ -210,10 +210,7 @@ Runs on `https://localhost:5001` and `http://localhost:5000`
 Image deployment:
 docker build -t jiradata:latest .
 docker images | grep jiradata
-
-
 docker tag jiradata:latest localhost:32000/jiradata:latest
-
 docker push localhost:32000/jiradata:latest
 
 docker build -t jiradataweb:latest .

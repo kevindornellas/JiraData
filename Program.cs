@@ -101,7 +101,7 @@ static DateTime? GetLatestInsertionDate(string connectionString)
 {
     using var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
     connection.Open();
-    var query = "SELECT MAX(CAST(Created AS DATE)) FROM JiraIssue WHERE Created IS NOT NULL";
+    var query = "SELECT MAX(CAST(CompletedDate AS DATE)) FROM JiraIssue WHERE CompletedDate IS NOT NULL";
     using var command = new Microsoft.Data.SqlClient.SqlCommand(query, connection);
     
     var result = command.ExecuteScalar();
