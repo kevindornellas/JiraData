@@ -43,7 +43,7 @@ app.MapPost("/api/jira/sync", async (string? startDate, string? endDate) =>
         {
             string start = startDateParsed.AddDays(i).ToString("yyyy-MM-dd");
             string end = startDateParsed.AddDays(i + 1).ToString("yyyy-MM-dd");
-            string jqlQuery = "project In (\"Elastic Admin\", \"Elastic Product Development\") and statuscategory = Complete and statuscategorychangeddate > " + start + "  and statuscategorychangeddate < " + end + "  and (resolution Is EMPTY or resolution in (Done, Declined)) and type in (Story, Task, Bug) ORDER BY key ASC, created DESC";
+            string jqlQuery = "project In (\"Elastic Admin\", \"Elastic Product Development\") and statuscategory = Complete and resolutiondate > " + start + "  and resolutiondate < " + end + "  and (resolution Is EMPTY or resolution in (Done, Declined)) and type in (Story, Task, Bug) ORDER BY key ASC, created DESC";
             
             List<JiraIssue> issues = await jiraApiClient.GetIssuesFromJiraAsync(jqlQuery);
             SQLInserter sqlInserter = new SQLInserter(sqlConnectionString);
