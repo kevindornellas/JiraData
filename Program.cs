@@ -11,6 +11,8 @@ builder.Configuration
 
 var app = builder.Build();
 
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+
 app.MapPost("/api/jira/sync", async (string? startDate, string? endDate) =>
 {
     try
