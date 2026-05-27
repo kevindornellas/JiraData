@@ -28,7 +28,7 @@ spec:
         - name: ASPNETCORE_URLS
           value: "http://+:5000"
         - name: JiraDataApi__BaseUrl
-          value: "http://jiradata-api-service"
+          value: "http://jiradata-api-service:5000"
         livenessProbe:
           httpGet:
             path: /healthz
