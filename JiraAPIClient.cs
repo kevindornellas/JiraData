@@ -219,7 +219,12 @@ public class JiraApiClient
         }
         catch (Exception ex)
         {
-        public async Task<string?> GetIssueResolutionDateAsync(string issueKey)
+            Console.WriteLine($"Error retrieving changelog: {ex.Message}");
+            return history;
+        }
+    }
+
+    public async Task<string?> GetIssueResolutionDateAsync(string issueKey)
     {
         string url = $"{_jiraBaseUrl}/rest/api/3/issue/{issueKey}?fields=resolutiondate";
         try
