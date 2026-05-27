@@ -99,9 +99,13 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
 static DateTime? GetLatestInsertionDate(string connectionString)
 {
-    using var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
+    var connBuilder = new Microsoft.Data.SqlClient.SqlConnectionStringBuilder(connectionString)
+    {
+        TrustServerCertificate = true
+    };
+    using var connection = new Microsoft.Data.SqlClient.SqlConnection(connBuilder.ConnectionString);
     connection.Open();
-    var query = "SELECT MAX(CAST(CompletedDate AS DATE)) FROM JiraIssue WHERE CompletedDate IS NOT NULL";
+    var query = "SELECT MAX(TRY_CAST(CompletedDate AS DATE)) FROM JiraIssue WHERE CompletedDate IS NOT NULL AND CompletedDate != ''";
     using var command = new Microsoft.Data.SqlClient.SqlCommand(query, connection);
     
     var result = command.ExecuteScalar();
